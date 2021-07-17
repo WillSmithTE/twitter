@@ -17,13 +17,9 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	config := oauth1.NewConfig(os.Getenv("KEY"), os.Getenv("SECRET"))
+	config := oauth1.NewConfig(os.Getenv("KEYs"), os.Getenv("SECRET"))
 	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN"), os.Getenv("ACCESS_TOKEN_SECRET"))
 
-	log.Print(os.Getenv("KEY"))
-	log.Print(os.Getenv("SECRET"))
-	log.Print(os.Getenv("ACCESS_TOKEN"))
-	log.Print(os.Getenv("ACCESS_TOKEN_SECRET"))
 	httpClient := config.Client(oauth1.NoContext, token)
 
 	// Twitter client
