@@ -17,7 +17,7 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	config := oauth1.NewConfig(os.Getenv("KEYs"), os.Getenv("SECRET"))
+	config := oauth1.NewConfig(os.Getenv("KEY"), os.Getenv("SECRET"))
 	token := oauth1.NewToken(os.Getenv("ACCESS_TOKEN"), os.Getenv("ACCESS_TOKEN_SECRET"))
 
 	httpClient := config.Client(oauth1.NoContext, token)
