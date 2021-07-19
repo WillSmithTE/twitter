@@ -1,12 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"log"
+)
 
 func main() {
-	res, err := SearchAstra()
+
+}
+
+func DoTwitterAnalysis() {
+	res, err := SearchTwitter("Donald+Trump")
 	if err == nil {
-		fmt.Printf("success! - %-v", res)
+		tone := ComprehendTwitter(*res, "Trump")
+		log.Printf("analysis complete - %-v", tone)
 	} else {
-		fmt.Printf("error - %-v", err)
+		log.Printf("error - %-v", err)
 	}
 }

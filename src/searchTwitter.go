@@ -11,17 +11,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-var filename = "gobs/testfile"
-
-func SearchAstra() (*SearchResponse, error) {
+func SearchAstra() (*TwitterSearchResponse, error) {
 	return SearchTwitter("astrazeneca")
 }
 
-func SearchPfizer() (*SearchResponse, error) {
+func SearchPfizer() (*TwitterSearchResponse, error) {
 	return SearchTwitter("pfizer")
 }
 
-func SearchTwitter(query string) (*SearchResponse, error) {
+func SearchTwitter(query string) (*TwitterSearchResponse, error) {
 	filename := "gobs/" + query
 
 	gob.Register(map[string]interface{}{})
@@ -33,7 +31,7 @@ func SearchTwitter(query string) (*SearchResponse, error) {
 		log.Fatalf("Error loading .env file")
 	}
 
-	result := &SearchResponse{}
+	result := &TwitterSearchResponse{}
 	err = result.Load(filename)
 
 	if err == nil {
@@ -51,7 +49,7 @@ func SearchTwitter(query string) (*SearchResponse, error) {
 
 	if err == nil {
 		defer res.Body.Close()
-		result := &SearchResponse{}
+		result := &TwitterSearchResponse{}
 		json.NewDecoder(res.Body).Decode(result)
 
 		err = result.Save(filename)
@@ -66,7 +64,7 @@ func SearchTwitter(query string) (*SearchResponse, error) {
 
 }
 
-func (t *SearchResponse) Load(filename string) error {
+func (t *TwitterSearchResponse) Load(filename string) error {
 
 	fi, err := os.Open(filename)
 	if err != nil {
@@ -89,7 +87,7 @@ func (t *SearchResponse) Load(filename string) error {
 	return nil
 }
 
-func (data *SearchResponse) Save(filename string) error {
+func (data *TwitterSearchResponse) Save(filename string) error {
 
 	fi, err := os.Create(filename)
 	if err != nil {

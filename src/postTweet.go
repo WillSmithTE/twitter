@@ -26,7 +26,7 @@ func PostTweet() {
 	client := twitter.NewClient(httpClient)
 
 	// Send a Tweet
-	tweet, resp, err := client.Statuses.Update("just setting up my twttr bot", nil)
+	tweet, resp, err := client.Statuses.Update("Sentiment analysis on recent tweets coming from Sydney about AstraZeneca and Pfizer", nil)
 
 	if err == nil {
 		fmt.Printf("tweet: %-v", tweet)

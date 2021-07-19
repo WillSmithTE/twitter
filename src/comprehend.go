@@ -1,14 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/comprehend"
 )
 
-func GetToneAnalysis() {
+func GetToneAnalysis(texts []string) []comprehend.DetectSentimentOutput {
 
 	sess := session.Must(session.NewSession(&aws.Config{
 		Region: aws.String("ap-southeast-2"),
@@ -16,11 +16,9 @@ func GetToneAnalysis() {
 
 	client := comprehend.New(sess)
 
-	listTexts := []string{
-		"Just had my second AstraZeneca shot. Feeling safer already. #GetTheJab",
-	}
+	var scores []comprehend.DetectSentimentOutput
 
-	for _, text := range listTexts {
+	for _, text := range texts {
 		params := comprehend.DetectSentimentInput{}
 		params.SetLanguageCode("en")
 		params.SetText(text)
@@ -29,10 +27,11 @@ func GetToneAnalysis() {
 
 		err := req.Send()
 		if err == nil {
-			fmt.Println(*resp)
+			scores = append(scores, *resp)
 		} else {
-			fmt.Println(err)
+			log.Printf("error getting sentiment for '%v' - %v", text, err)
 		}
 	}
 
+	return scores
 }
