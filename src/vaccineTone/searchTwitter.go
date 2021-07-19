@@ -1,4 +1,4 @@
-package main
+package vaccineTone
 
 import (
 	"compress/gzip"

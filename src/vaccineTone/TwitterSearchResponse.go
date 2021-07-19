@@ -1,4 +1,4 @@
-package main
+package vaccineTone
 
 type TwitterSearchResponse struct {
 	Statuses       []TwitterStatus `json:"statuses"`
