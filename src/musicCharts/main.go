@@ -1,12 +1,18 @@
 package musicCharts
 
-import "log"
+import (
+	"encoding/json"
+	"log"
+)
 
 func Main() {
-	tempo, err := GetTempo()
+	yearData, err := GetAllTop100SongsByYear()
 	if err == nil {
-		log.Printf("success - %-v", *tempo)
+		AddMedianTempos(yearData)
+
+		jsonData, _ := json.Marshal(yearData)
+		log.Printf("Success - %v", string(jsonData))
 	} else {
-		log.Printf("error - %-v", err)
+		log.Printf("error getting top 100s - %-v", err)
 	}
 }

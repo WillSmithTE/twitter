@@ -4,10 +4,22 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 )
 
-func GetTempo(query string) (*float64, error) {
+func GetSongData(query string) (*SongData, error) {
+	filename := "gobs/songs/" + query
+
+	songData := &SongData{}
+	err := songData.Load(filename)
+
+	if err == nil {
+		log.Printf("Saved data found for song %v", query)
+		return songData, nil
+	}
+
+	log.Printf("Failed to load saved data for song %v", query)
 
 	searchId, err := getSearchId(query)
 
@@ -15,13 +27,21 @@ func GetTempo(query string) (*float64, error) {
 		return nil, err
 	}
 
-	tempo, err := getTempoBySearchId(*searchId)
+	songData, err = getFullSongData(*searchId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return tempo, nil
+	err = songData.Save(filename)
+
+	if err == nil {
+		log.Printf("Saved data for song %v", query)
+	} else {
+		log.Printf("Failed to save data for song %v - %v", query, err)
+	}
+
+	return songData, nil
 
 }
 
@@ -73,7 +93,7 @@ func getSearchId(query string) (*string, error) {
 	return &idResponse.ID, nil
 }
 
-func getTempoBySearchId(searchId string) (*float64, error) {
+func getFullSongData(searchId string) (*SongData, error) {
 
 	req, err := http.NewRequest("GET", "https://songbpm.com/_next/data/gpiNoF_Bm5T8NtijFyVkm/searches/"+searchId+".json?id="+searchId, nil)
 	if err != nil {
@@ -110,9 +130,7 @@ func getTempoBySearchId(searchId string) (*float64, error) {
 		return nil, errors.New("song not found")
 	}
 
-	tempo := songs[0].Tempo
-
-	return &tempo, nil
+	return &songs[0], nil
 }
 
 type IdResponse struct {
@@ -125,25 +143,27 @@ type SongSearchResponse struct {
 			ID    string `json:"id"`
 			Query string `json:"query"`
 		} `json:"search"`
-		Songs []struct {
-			ID   string `json:"id"`
-			Data struct {
-				ID    string `json:"id"`
-				Name  string `json:"name"`
-				Album struct {
-					ID   string `json:"id"`
-					Name string `json:"name"`
-				} `json:"album"`
-			} `json:"data"`
-			Name   string  `json:"name"`
-			Slug   string  `json:"slug"`
-			Tempo  float64 `json:"tempo"`
-			Artist struct {
-				ID   string `json:"id"`
-				Name string `json:"name"`
-				Slug string `json:"slug"`
-			} `json:"artist"`
-		} `json:"songs"`
+		Songs []SongData `json:"songs"`
 	} `json:"pageProps"`
 	NSSP bool `json:"__N_SSP"`
+}
+
+type SongData struct {
+	ID   string `json:"id"`
+	Data struct {
+		ID    string `json:"id"`
+		Name  string `json:"name"`
+		Album struct {
+			ID   string `json:"id"`
+			Name string `json:"name"`
+		} `json:"album"`
+	} `json:"data"`
+	Name   string  `json:"name"`
+	Slug   string  `json:"slug"`
+	Tempo  float64 `json:"tempo"`
+	Artist struct {
+		ID   string `json:"id"`
+		Name string `json:"name"`
+		Slug string `json:"slug"`
+	} `json:"artist"`
 }
