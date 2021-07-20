@@ -1,17 +1,26 @@
 package musicCharts
 
 import (
-	"encoding/json"
 	"log"
+
+	"github.com/willsmithte/twitter/src/util"
 )
 
 func Main() {
-	yearData, err := GetAllTop100SongsByYear()
+	data, err := GetAllTop100SongsByYear()
 	if err == nil {
-		AddMedianTempos(yearData)
+		// AddStats(yearData)
 
-		jsonData, _ := json.Marshal(yearData)
-		log.Printf("Success - %v", string(jsonData))
+		var found *YearData
+
+		for _, yearData := range data {
+			if yearData.Year == 1945 {
+				found = yearData
+				break
+			}
+		}
+
+		util.PrintJson(found)
 	} else {
 		log.Printf("error getting top 100s - %-v", err)
 	}

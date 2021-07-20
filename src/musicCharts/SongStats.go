@@ -6,16 +6,16 @@ import (
 	"github.com/montanaflynn/stats"
 )
 
-func AddMedianTempos(allData []*YearData) {
+func AddStats(allData []*YearData) {
 	for _, yearData := range allData {
-		err := addTemposToYear(yearData)
+		err := addStatsToYear(yearData)
 		if err != nil {
 			log.Printf("failed to get median tempo for year %v", yearData.Year)
 		}
 	}
 }
 
-func addTemposToYear(yearData *YearData) error {
+func addStatsToYear(yearData *YearData) error {
 	var tempos stats.Float64Data
 	for _, song := range yearData.RankedSongs {
 		data, err := GetSongData(song.BasicTitle)
@@ -26,11 +26,12 @@ func addTemposToYear(yearData *YearData) error {
 			log.Printf("Failed to get songdata (including tempo) for %v", song.BasicTitle)
 		}
 	}
-	yearMedian, err := tempos.Median()
+	median, err := tempos.Median()
+	mean, err := tempos.Mean()
 	if err == nil {
 		return err
 	} else {
-		yearData.MedianTempo = yearMedian
+		yearData.Stats = SongStats{Median: median, Mean: mean}
 	}
 	return nil
 }

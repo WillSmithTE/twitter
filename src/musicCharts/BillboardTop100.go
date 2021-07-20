@@ -84,8 +84,11 @@ func scrapeListTable(doc soup.Root) ([]*Song, error) {
 		tds := row.FindAll("td")
 		if len(tds) == 3 {
 			author := tds[1].Children()[0].Text()
+			if author == "" {
+				author = tds[1].Text()
+			}
 			title := tds[2].Text()
-			combinedText := title + " - " + author
+			combinedText := title + " " + author
 			cleaned := cleanString(combinedText)
 			songs = append(songs, &Song{BasicTitle: cleaned})
 		} else {
@@ -140,11 +143,12 @@ func cleanString(before string) string {
 	cleaned := strings.Replace(before, " and His Orchestra", "", 1)
 	cleaned = strings.ReplaceAll(cleaned, " featuring", "")
 	cleaned = strings.ReplaceAll(cleaned, " Featuring", "")
+	cleaned = strings.ReplaceAll(cleaned, " &", "")
 	return cleaned
 }
 
 type YearData struct {
-	MedianTempo float64
+	Stats       SongStats
 	RankedSongs []*Song
 	Year        int
 }
@@ -152,4 +156,9 @@ type YearData struct {
 type Song struct {
 	BasicTitle string
 	SongData   SongData
+}
+
+type SongStats struct {
+	Median float64
+	Mean   float64
 }
