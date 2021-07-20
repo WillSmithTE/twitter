@@ -16,7 +16,7 @@ export const Table = () => {
             <CsvToHtmlTable
                 data={csvData}
                 csvDelimiter=","
-                tableClassName="table table-striped table-hover"
+                tableClassName="table table-bordered table-striped table-hover"
             />
         </div>
 
