@@ -7,8 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 func SearchAstra() (*TwitterSearchResponse, error) {
@@ -25,14 +23,8 @@ func SearchTwitter(query string) (*TwitterSearchResponse, error) {
 	gob.Register(map[string]interface{}{})
 	gob.Register([]interface{}{})
 
-	err := godotenv.Load(".env")
-
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-	}
-
 	result := &TwitterSearchResponse{}
-	err = result.Load(filename)
+	err := result.Load(filename)
 
 	if err == nil {
 		log.Print("returning saved result")

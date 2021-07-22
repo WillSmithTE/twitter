@@ -6,6 +6,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"os"
 )
 
 func GetSongData(query string) (*SongData, error) {
@@ -15,8 +16,12 @@ func GetSongData(query string) (*SongData, error) {
 	err := songData.Load(filename)
 
 	if err == nil {
-		log.Printf("Saved data found for song %v", query)
+		// log.Printf("Saved data found for song %v", query)
 		return songData, nil
+	}
+
+	if os.Getenv("SONGS_RETRY") == "false" {
+		return &SongData{}, nil
 	}
 
 	log.Printf("Failed to load saved data for song %v", query)
@@ -42,7 +47,6 @@ func GetSongData(query string) (*SongData, error) {
 	}
 
 	return songData, nil
-
 }
 
 func getSearchId(query string) (*string, error) {

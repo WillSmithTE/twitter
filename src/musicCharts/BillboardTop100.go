@@ -17,35 +17,40 @@ func GetAllTop100SongsByYear() ([]*YearData, error) {
 
 	var allYearsData []*YearData
 
-	for i := 1941; i <= int(yearAsInt); i++ {
-		data := YearData{Year: i}
-
-		filename := "gobs/years/" + fmt.Sprint(i)
-		err := data.Load(filename)
-
-		if err == nil {
-			log.Printf("Saved data found for year %v", i)
-		} else {
-			log.Printf("Failed to load saved data for year %v", i)
-
-			songs, err := getSongsForYear(&data)
-			if err == nil {
-				log.Printf("Data collected successfully for year %v", i)
-				data.RankedSongs = songs
-			} else {
-				log.Printf("Failed to get top 100 for year %v - %v", i, err)
-			}
-			err = data.Save(filename)
-			if err == nil {
-				log.Printf("Saved data for year %v", i)
-			} else {
-				log.Printf("Failed to save data for year %v - %v", i, err)
-			}
-		}
+	for i := 1941; i < int(yearAsInt); i++ {
+		data := getYearData(i)
 		allYearsData = append(allYearsData, &data)
 	}
 
 	return allYearsData, nil
+}
+
+func getYearData(year int) YearData {
+	data := YearData{Year: year}
+
+	filename := "gobs/years/" + fmt.Sprint(year)
+	err := data.Load(filename)
+
+	if err == nil {
+		// log.Printf("Saved data found for year %v", i)
+	} else {
+		log.Printf("Failed to load saved data for year %v", year)
+
+		songs, err := getSongsForYear(&data)
+		if err == nil {
+			log.Printf("Data collected successfully for year %v", year)
+			data.RankedSongs = songs
+		} else {
+			log.Printf("Failed to get top 100 for year %v - %v", year, err)
+		}
+		err = data.Save(filename)
+		if err == nil {
+			log.Printf("Saved data for year %v", year)
+		} else {
+			log.Printf("Failed to save data for year %v - %v", year, err)
+		}
+	}
+	return data
 }
 
 func getSongsForYear(yearData *YearData) ([]*Song, error) {
@@ -89,7 +94,7 @@ func scrapeListTable(doc soup.Root) ([]*Song, error) {
 			}
 			title := tds[2].Text()
 			combinedText := title + " " + author
-			cleaned := cleanString(combinedText)
+			cleaned := CleanString(combinedText)
 			songs = append(songs, &Song{BasicTitle: cleaned})
 		} else {
 			return nil, errors.New("expected 3 cells in table row, found " + fmt.Sprint(len(tds)))
@@ -103,18 +108,12 @@ func scrapeListPTags(doc soup.Root) ([]*Song, error) {
 	if div.Error != nil {
 		return nil, div.Error
 	}
-	pTags := div.FindAll("p")
-	if len(pTags) == 0 {
-		return nil, errors.New("no ptags found")
-	}
-
 	var songs []*Song
-	for _, pTag := range pTags {
-		text := pTag.Text()
-		indexOfDot := strings.Index(text, ".")
-		withoutRank := text[indexOfDot+1:]
-		withoutBy := strings.ReplaceAll(withoutRank, "by ", "")
-		cleaned := cleanString(withoutBy)
+	divText := strings.Split(div.Text(), "\n")
+	for _, song := range divText {
+		indexOfDot := strings.Index(song, ".")
+		withoutRank := song[indexOfDot+1:]
+		cleaned := CleanString(withoutRank)
 		songs = append(songs, &Song{BasicTitle: cleaned})
 	}
 
@@ -133,17 +132,23 @@ func scrapeListArticles(doc soup.Root) ([]*Song, error) {
 			return nil, errors.New("no divs found")
 		}
 		title, artist := insideDivs[0].Text(), insideDivs[1].Text()
-		text := cleanString(title + " " + artist)
+		text := CleanString(title + " " + artist)
 		songs = append(songs, &Song{BasicTitle: text})
 	}
 	return songs, nil
 }
 
-func cleanString(before string) string {
+func CleanString(before string) string {
 	cleaned := strings.Replace(before, " and His Orchestra", "", 1)
 	cleaned = strings.ReplaceAll(cleaned, " featuring", "")
 	cleaned = strings.ReplaceAll(cleaned, " Featuring", "")
+	cleaned = strings.ReplaceAll(cleaned, " Feat.", "")
+	cleaned = strings.ReplaceAll(cleaned, " feat.", "")
 	cleaned = strings.ReplaceAll(cleaned, " &", "")
+	cleaned = strings.ReplaceAll(cleaned, "/", " ")
+	cleaned = strings.ReplaceAll(cleaned, "/", " ")
+	cleaned = strings.ReplaceAll(cleaned, "by ", "")
+	cleaned = strings.ReplaceAll(cleaned, "&nbsp;", " ")
 	return cleaned
 }
 
