@@ -18,9 +18,11 @@ func addStatsToYear(yearData *YearData) {
 		data, err := GetSongData(song.BasicTitle)
 		if err == nil {
 			song.SongData = *data
-			tempos = append(tempos, data.Tempo)
+			if song.SongData.Tempo != 0 {
+				tempos = append(tempos, data.Tempo)
+			}
 		} else {
-			log.Printf("Failed to get songdata (including tempo) for %v - %v", song.BasicTitle, err)
+			log.Printf("Failed to get songdata for %v - %v", song.BasicTitle, err)
 		}
 	}
 	median, err := tempos.Median()

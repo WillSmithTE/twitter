@@ -9,19 +9,9 @@ import (
 )
 
 func Main() {
-	// getAndServeSongs()
-	data, _ := GetAllTop100SongsByYear()
-	var problemYearsData []*YearData
-	for _, data := range data {
-		if data.Year == 1943 || data.Year == 1944 || data.Year == 2013 || data.Year == 2015 || data.Year == 2020 {
-			problemYearsData = append(problemYearsData, data)
-		}
-	}
-
-	for _, data := range problemYearsData {
-		log.Print(*data)
-
-	}
+	// songs := GetYearData(2019)
+	// log.Printf("%v", songs.RankedSongs[1])
+	getAndServeSongs()
 }
 
 func getAndServeSongs() {
@@ -47,7 +37,12 @@ func handleRequests(data []*YearData) {
 	)
 	http.Handle("/", r)
 
-	log.Fatal(http.ListenAndServe(":5000", nil))
+	err := http.ListenAndServe(":5000", nil)
+	if err == nil {
+		log.Print("serving now")
+	} else {
+		log.Fatal(err)
+	}
 }
 
 func Serve(data []*YearData) {
