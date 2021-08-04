@@ -1,26 +1,22 @@
 {
   "files": {
-    "main.css": "/twitter/static/css/main.5dc1e534.chunk.css",
-    "main.js": "/twitter/static/js/main.0561df10.chunk.js",
-    "main.js.map": "/twitter/static/js/main.0561df10.chunk.js.map",
-    "runtime-main.js": "/twitter/static/js/runtime-main.94231f03.js",
-    "runtime-main.js.map": "/twitter/static/js/runtime-main.94231f03.js.map",
-    "static/css/2.fb17aa6d.chunk.css": "/twitter/static/css/2.fb17aa6d.chunk.css",
-    "static/js/2.2fb23f7d.chunk.js": "/twitter/static/js/2.2fb23f7d.chunk.js",
-    "static/js/2.2fb23f7d.chunk.js.map": "/twitter/static/js/2.2fb23f7d.chunk.js.map",
-    "static/js/3.aee181d2.chunk.js": "/twitter/static/js/3.aee181d2.chunk.js",
-    "static/js/3.aee181d2.chunk.js.map": "/twitter/static/js/3.aee181d2.chunk.js.map",
-    "index.html": "/twitter/index.html",
-    "static/css/2.fb17aa6d.chunk.css.map": "/twitter/static/css/2.fb17aa6d.chunk.css.map",
-    "static/css/main.5dc1e534.chunk.css.map": "/twitter/static/css/main.5dc1e534.chunk.css.map",
-    "static/js/2.2fb23f7d.chunk.js.LICENSE.txt": "/twitter/static/js/2.2fb23f7d.chunk.js.LICENSE.txt",
-    "static/media/questions.1608cdfc.csv": "/twitter/static/media/questions.1608cdfc.csv"
+    "main.css": "/covid-vax/static/css/main.8c8b27cf.chunk.css",
+    "main.js": "/covid-vax/static/js/main.0d4457df.chunk.js",
+    "main.js.map": "/covid-vax/static/js/main.0d4457df.chunk.js.map",
+    "runtime-main.js": "/covid-vax/static/js/runtime-main.69aa7103.js",
+    "runtime-main.js.map": "/covid-vax/static/js/runtime-main.69aa7103.js.map",
+    "static/js/2.5a127ad1.chunk.js": "/covid-vax/static/js/2.5a127ad1.chunk.js",
+    "static/js/2.5a127ad1.chunk.js.map": "/covid-vax/static/js/2.5a127ad1.chunk.js.map",
+    "static/js/3.2d64c4c2.chunk.js": "/covid-vax/static/js/3.2d64c4c2.chunk.js",
+    "static/js/3.2d64c4c2.chunk.js.map": "/covid-vax/static/js/3.2d64c4c2.chunk.js.map",
+    "index.html": "/covid-vax/index.html",
+    "static/css/main.8c8b27cf.chunk.css.map": "/covid-vax/static/css/main.8c8b27cf.chunk.css.map",
+    "static/js/2.5a127ad1.chunk.js.LICENSE.txt": "/covid-vax/static/js/2.5a127ad1.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.94231f03.js",
-    "static/css/2.fb17aa6d.chunk.css",
-    "static/js/2.2fb23f7d.chunk.js",
-    "static/css/main.5dc1e534.chunk.css",
-    "static/js/main.0561df10.chunk.js"
+    "static/js/runtime-main.69aa7103.js",
+    "static/js/2.5a127ad1.chunk.js",
+    "static/css/main.8c8b27cf.chunk.css",
+    "static/js/main.0d4457df.chunk.js"
   ]
 }
