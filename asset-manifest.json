@@ -1,22 +1,26 @@
 {
   "files": {
-    "main.css": "/covid-vax/static/css/main.8c8b27cf.chunk.css",
-    "main.js": "/covid-vax/static/js/main.e403eb64.chunk.js",
-    "main.js.map": "/covid-vax/static/js/main.e403eb64.chunk.js.map",
-    "runtime-main.js": "/covid-vax/static/js/runtime-main.6ac7d625.js",
-    "runtime-main.js.map": "/covid-vax/static/js/runtime-main.6ac7d625.js.map",
-    "static/js/2.7a99fd3c.chunk.js": "/covid-vax/static/js/2.7a99fd3c.chunk.js",
-    "static/js/2.7a99fd3c.chunk.js.map": "/covid-vax/static/js/2.7a99fd3c.chunk.js.map",
-    "static/js/3.a4a24799.chunk.js": "/covid-vax/static/js/3.a4a24799.chunk.js",
-    "static/js/3.a4a24799.chunk.js.map": "/covid-vax/static/js/3.a4a24799.chunk.js.map",
-    "index.html": "/covid-vax/index.html",
-    "static/css/main.8c8b27cf.chunk.css.map": "/covid-vax/static/css/main.8c8b27cf.chunk.css.map",
-    "static/js/2.7a99fd3c.chunk.js.LICENSE.txt": "/covid-vax/static/js/2.7a99fd3c.chunk.js.LICENSE.txt"
+    "main.css": "/twitter/static/css/main.5dc1e534.chunk.css",
+    "main.js": "/twitter/static/js/main.c1fc596c.chunk.js",
+    "main.js.map": "/twitter/static/js/main.c1fc596c.chunk.js.map",
+    "runtime-main.js": "/twitter/static/js/runtime-main.94231f03.js",
+    "runtime-main.js.map": "/twitter/static/js/runtime-main.94231f03.js.map",
+    "static/css/2.fb17aa6d.chunk.css": "/twitter/static/css/2.fb17aa6d.chunk.css",
+    "static/js/2.2fb23f7d.chunk.js": "/twitter/static/js/2.2fb23f7d.chunk.js",
+    "static/js/2.2fb23f7d.chunk.js.map": "/twitter/static/js/2.2fb23f7d.chunk.js.map",
+    "static/js/3.aee181d2.chunk.js": "/twitter/static/js/3.aee181d2.chunk.js",
+    "static/js/3.aee181d2.chunk.js.map": "/twitter/static/js/3.aee181d2.chunk.js.map",
+    "index.html": "/twitter/index.html",
+    "static/css/2.fb17aa6d.chunk.css.map": "/twitter/static/css/2.fb17aa6d.chunk.css.map",
+    "static/css/main.5dc1e534.chunk.css.map": "/twitter/static/css/main.5dc1e534.chunk.css.map",
+    "static/js/2.2fb23f7d.chunk.js.LICENSE.txt": "/twitter/static/js/2.2fb23f7d.chunk.js.LICENSE.txt",
+    "static/media/questions.9cfe2248.csv": "/twitter/static/media/questions.9cfe2248.csv"
   },
   "entrypoints": [
-    "static/js/runtime-main.6ac7d625.js",
-    "static/js/2.7a99fd3c.chunk.js",
-    "static/css/main.8c8b27cf.chunk.css",
-    "static/js/main.e403eb64.chunk.js"
+    "static/js/runtime-main.94231f03.js",
+    "static/css/2.fb17aa6d.chunk.css",
+    "static/js/2.2fb23f7d.chunk.js",
+    "static/css/main.5dc1e534.chunk.css",
+    "static/js/main.c1fc596c.chunk.js"
   ]
 }
