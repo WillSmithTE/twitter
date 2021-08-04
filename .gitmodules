@@ -1,0 +1,3 @@
+[submodule "src/vaccineDemographics/frontend"]
+	path = src/vaccineDemographics/frontend
+	url = https://github.com/WillSmithTE/vax-fe.git
