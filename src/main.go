@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/joho/godotenv"
-	"github.com/willsmithte/twitter/src/musicCharts"
+	"github.com/willsmithte/twitter/src/vaccineDemographics"
 )
 
 func main() {
@@ -14,5 +14,5 @@ func main() {
 		log.Fatalf("Error loading .env file")
 	}
 
-	musicCharts.Main()
+	vaccineDemographics.Main()
 }

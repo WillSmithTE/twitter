@@ -10,4 +10,5 @@ require (
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/montanaflynn/stats v0.6.6 // indirect
+	github.com/xuri/excelize/v2 v2.4.1 // indirect
 )
