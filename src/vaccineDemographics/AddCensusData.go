@@ -76,6 +76,7 @@ func addMedians(database *Database) error {
 		areaData.Area.CensusStats.Income.MedianPersonal = stringToFloat(row[3])
 		areaData.Area.CensusStats.Income.MedianFamily = stringToFloat(row[5])
 		areaData.Area.CensusStats.Income.MedianHousehold = stringToFloat(row[7])
+		areaData.Area.CensusStats.AvgPeoplePerHousehold = stringToFloat(row[8])
 		return nil
 	})
 }

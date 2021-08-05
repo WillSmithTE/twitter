@@ -12,11 +12,11 @@ type AreaCensusStats struct {
 	Age                         Age
 	NumFamiles                  int
 	Income                      Incomes
-	AvgPeoplePerHousehold       float32
+	AvgPeoplePerHousehold       float64
 	MedianWeeklyRent            float64
-	AvgMotorVehiclesPerDwelling float32
+	AvgMotorVehiclesPerDwelling float64
 	// Education                   Education
-	Religion     map[string]float32
+	Religion     map[string]float64
 	HoursWorked  HoursWorked
 	TravelToWork TravelToWork
 }
