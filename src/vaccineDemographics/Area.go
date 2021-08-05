@@ -11,7 +11,7 @@ type AreaCensusStats struct {
 	Population                  int
 	Age                         Age
 	NumFamiles                  int
-	Incomes                     Incomes
+	Income                      Incomes
 	AvgPeoplePerHousehold       float32
 	MedianWeeklyRent            float64
 	AvgMotorVehiclesPerDwelling float32

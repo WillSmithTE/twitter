@@ -10,16 +10,20 @@ import (
 var sheetsDirPath = "src/vaccineDemographics/assets/2016_GCP_ALL_for_NSW_short-header/2016 Census GCP All Geographies for NSW/SA4/NSW/"
 
 func AddCensusData(database *Database) error {
-	err := addPopulationAndAges(database)
+	err := addPopulation(database)
+	if err != nil {
+		return err
+	}
+	err = addMedians(database)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func addPopulationAndAges(database *Database) error {
-	ageFile := sheetsDirPath + "2016Census_G01_NSW_SA4.csv"
-	err := util.ExecuteOnEachCsvRow(ageFile, func(row []string) error {
+func addPopulation(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G01_NSW_SA4.csv"
+	err := util.ExecuteOnEachCsvRow(filename, func(row []string) error {
 		censusCode := row[0]
 		codeInt, err := strconv.Atoi(censusCode)
 		if err != nil {
@@ -36,21 +40,7 @@ func addPopulationAndAges(database *Database) error {
 	if err != nil {
 		return err
 	}
-	mediansFile := sheetsDirPath + "2016Census_G02_NSW_SA4.csv"
-	return util.ExecuteOnEachCsvRow(mediansFile, func(row []string) error {
-		censusCode := row[0]
-		codeInt, err := strconv.Atoi(censusCode)
-		if err != nil {
-			return err
-		}
-		areaData, err := database.getAreaDataByCode(codeInt)
-		if err != nil {
-			log.Print(err.Error())
-			return nil
-		}
-		areaData.Area.CensusStats.Age.Median = stringToInt(row[1])
-		return nil
-	})
+	return nil
 }
 
 func addPopAndAgesFromRow(row []string, areaData *AreaData) {
@@ -69,10 +59,39 @@ func addPopAndAgesFromRow(row []string, areaData *AreaData) {
 
 }
 
+func addMedians(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G02_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+		areaData.Area.CensusStats.Age.Median = stringToInt(row[1])
+		areaData.Area.CensusStats.Income.MedianPersonal = stringToFloat(row[3])
+		areaData.Area.CensusStats.Income.MedianFamily = stringToFloat(row[5])
+		areaData.Area.CensusStats.Income.MedianHousehold = stringToFloat(row[7])
+		return nil
+	})
+}
+
 func stringToInt(s string) int {
-	asInt, err := strconv.Atoi(s)
+	res, err := strconv.Atoi(s)
 	if err != nil {
 		log.Printf("Failed to convert string to int - %v", s)
 	}
-	return asInt
+	return res
+}
+
+func stringToFloat(s string) float64 {
+	res, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		log.Printf("Failed to convert string to int - %v", s)
+	}
+	return res
 }
