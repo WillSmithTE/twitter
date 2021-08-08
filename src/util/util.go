@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 func PrintJson(toPrint interface{}) {
@@ -21,7 +22,10 @@ func ExecuteOnEachCsvRow(filename string, consume ConsumeCsvRow) error {
 	defer f.Close()
 
 	csvr := csv.NewReader(f)
-	csvr.Read() // skip headers row
+	headerRow, err := csvr.Read()
+	if err != nil {
+		return err
+	}
 
 	for {
 		row, err := csvr.Read()
@@ -33,11 +37,27 @@ func ExecuteOnEachCsvRow(filename string, consume ConsumeCsvRow) error {
 			}
 		}
 
-		err = consume(row)
+		err = consume(row, headerRow)
 		if err != nil {
 			return err
 		}
 	}
 }
 
-type ConsumeCsvRow func([]string) error
+type ConsumeCsvRow func(row []string, headerRow []string) error
+
+func StringToInt(s string) int {
+	res, err := strconv.Atoi(s)
+	if err != nil {
+		log.Printf("Failed to convert string to int - %v", s)
+	}
+	return res
+}
+
+func StringToFloat(s string) float64 {
+	res, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		log.Printf("Failed to convert string to int - %v", s)
+	}
+	return res
+}

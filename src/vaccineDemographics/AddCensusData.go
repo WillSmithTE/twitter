@@ -9,21 +9,23 @@ import (
 
 var sheetsDirPath = "src/vaccineDemographics/assets/2016_GCP_ALL_for_NSW_short-header/2016 Census GCP All Geographies for NSW/SA4/NSW/"
 
+type AddData func(*Database) error
+
+var AddDataFuncs = []AddData{addPopulation, addMedians, addReligion, addMotorVehicles}
+
 func AddCensusData(database *Database) error {
-	err := addPopulation(database)
-	if err != nil {
-		return err
-	}
-	err = addMedians(database)
-	if err != nil {
-		return err
+	for _, addDataFunc := range AddDataFuncs {
+		err := addDataFunc(database)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
 
 func addPopulation(database *Database) error {
 	filename := sheetsDirPath + "2016Census_G01_NSW_SA4.csv"
-	err := util.ExecuteOnEachCsvRow(filename, func(row []string) error {
+	err := util.ExecuteOnEachCsvRow(filename, func(row []string, _ []string) error {
 		censusCode := row[0]
 		codeInt, err := strconv.Atoi(censusCode)
 		if err != nil {
@@ -34,7 +36,18 @@ func addPopulation(database *Database) error {
 			log.Print(err.Error())
 			return nil
 		}
-		addPopAndAgesFromRow(row, areaData)
+		areaData.Area.CensusStats.Population = util.StringToInt(row[3])
+		areaData.Area.CensusStats.Age.Num0to4 = util.StringToInt(row[6])
+		areaData.Area.CensusStats.Age.Num5to14 = util.StringToInt(row[9])
+		areaData.Area.CensusStats.Age.Num15to19 = util.StringToInt(row[12])
+		areaData.Area.CensusStats.Age.Num20to24 = util.StringToInt(row[15])
+		areaData.Area.CensusStats.Age.Num25to34 = util.StringToInt(row[18])
+		areaData.Area.CensusStats.Age.Num35to44 = util.StringToInt(row[21])
+		areaData.Area.CensusStats.Age.Num45to54 = util.StringToInt(row[24])
+		areaData.Area.CensusStats.Age.Num55to64 = util.StringToInt(row[27])
+		areaData.Area.CensusStats.Age.Num65to74 = util.StringToInt(row[30])
+		areaData.Area.CensusStats.Age.Num75to84 = util.StringToInt(row[33])
+		areaData.Area.CensusStats.Age.Num85Plus = util.StringToInt(row[36])
 		return nil
 	})
 	if err != nil {
@@ -43,25 +56,9 @@ func addPopulation(database *Database) error {
 	return nil
 }
 
-func addPopAndAgesFromRow(row []string, areaData *AreaData) {
-	areaData.Area.CensusStats.Population = stringToInt(row[3])
-	areaData.Area.CensusStats.Age.Num0to4 = stringToInt(row[6])
-	areaData.Area.CensusStats.Age.Num5to14 = stringToInt(row[9])
-	areaData.Area.CensusStats.Age.Num15to19 = stringToInt(row[12])
-	areaData.Area.CensusStats.Age.Num20to24 = stringToInt(row[15])
-	areaData.Area.CensusStats.Age.Num25to34 = stringToInt(row[18])
-	areaData.Area.CensusStats.Age.Num35to44 = stringToInt(row[21])
-	areaData.Area.CensusStats.Age.Num45to54 = stringToInt(row[24])
-	areaData.Area.CensusStats.Age.Num55to64 = stringToInt(row[27])
-	areaData.Area.CensusStats.Age.Num65to74 = stringToInt(row[30])
-	areaData.Area.CensusStats.Age.Num75to84 = stringToInt(row[33])
-	areaData.Area.CensusStats.Age.Num85Plus = stringToInt(row[36])
-
-}
-
 func addMedians(database *Database) error {
 	filename := sheetsDirPath + "2016Census_G02_NSW_SA4.csv"
-	return util.ExecuteOnEachCsvRow(filename, func(row []string) error {
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, _ []string) error {
 		censusCode := row[0]
 		codeInt, err := strconv.Atoi(censusCode)
 		if err != nil {
@@ -72,27 +69,71 @@ func addMedians(database *Database) error {
 			log.Print(err.Error())
 			return nil
 		}
-		areaData.Area.CensusStats.Age.Median = stringToInt(row[1])
-		areaData.Area.CensusStats.Income.MedianPersonal = stringToFloat(row[3])
-		areaData.Area.CensusStats.Income.MedianFamily = stringToFloat(row[5])
-		areaData.Area.CensusStats.Income.MedianHousehold = stringToFloat(row[7])
-		areaData.Area.CensusStats.AvgPeoplePerHousehold = stringToFloat(row[8])
+		areaData.Area.CensusStats.Age.Median = util.StringToInt(row[1])
+		areaData.Area.CensusStats.Income.MedianPersonal = util.StringToFloat(row[3])
+		areaData.Area.CensusStats.Income.MedianFamily = util.StringToFloat(row[5])
+		areaData.Area.CensusStats.Income.MedianHousehold = util.StringToFloat(row[7])
+		areaData.Area.CensusStats.AvgPeoplePerHousehold = util.StringToFloat(row[8])
 		return nil
 	})
 }
 
-func stringToInt(s string) int {
-	res, err := strconv.Atoi(s)
-	if err != nil {
-		log.Printf("Failed to convert string to int - %v", s)
-	}
-	return res
+func addReligion(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G14_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, headerRow []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+
+		for i := 3; i < len(row)-3; i += 3 {
+			peopleCount := util.StringToInt(row[i])
+			areaData.Area.CensusStats.Religion.Raw[headerRow[i]] = peopleCount
+		}
+		return nil
+	})
 }
 
-func stringToFloat(s string) float64 {
-	res, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		log.Printf("Failed to convert string to int - %v", s)
-	}
-	return res
+func addMotorVehicles(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G30_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, headerRow []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+
+		num0 := util.StringToInt(row[1])
+		num1 := util.StringToInt(row[2])
+		num2 := util.StringToInt(row[3])
+		num3 := util.StringToInt(row[4])
+		num4Plus := util.StringToInt(row[5])
+
+		var totalNumDwellings int
+		var totalNumVehicles int
+		for numVehicles, numDwellings := range []int{num0, num1, num2, num3, num4Plus} {
+			totalNumDwellings += numDwellings
+			for i := 0; i < numDwellings; i++ {
+				totalNumVehicles += numVehicles
+			}
+		}
+
+		average := float64(totalNumVehicles) / float64(totalNumDwellings)
+		log.Printf("%v - %v - %v", totalNumVehicles, totalNumDwellings, average)
+
+		areaData.Area.CensusStats.AverageMotorVehiclesPerDwelling = average
+
+		return nil
+	})
 }

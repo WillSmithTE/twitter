@@ -7,18 +7,44 @@ type Area struct {
 	CensusStats AreaCensusStats
 }
 
+func NewArea(state string, name4 string) *Area {
+	return &Area{
+		State: state,
+		Name4: name4,
+		CensusStats: AreaCensusStats{
+			Religion: *NewReligion(),
+		},
+	}
+}
+
 type AreaCensusStats struct {
-	Population                  int
-	Age                         Age
-	NumFamiles                  int
-	Income                      Incomes
-	AvgPeoplePerHousehold       float64
-	MedianWeeklyRent            float64
-	AvgMotorVehiclesPerDwelling float64
+	Population                      int
+	Age                             Age
+	NumFamiles                      int
+	Income                          Incomes
+	AvgPeoplePerHousehold           float64
+	MedianWeeklyRent                float64
+	AverageMotorVehiclesPerDwelling float64
 	// Education                   Education
-	Religion     map[string]float64
+	Religion     Religion
 	HoursWorked  HoursWorked
 	TravelToWork TravelToWork
+}
+
+type Religion struct {
+	Raw map[string]int
+}
+
+func NewReligion() *Religion {
+	return &Religion{Raw: make(map[string]int)}
+}
+
+func (A *Area) GetReligionPercentages() map[string]float64 {
+	percentageMap := make(map[string]float64)
+	for religion, numPeople := range A.CensusStats.Religion.Raw {
+		percentageMap[religion] = float64(numPeople) / float64(A.CensusStats.Population)
+	}
+	return percentageMap
 }
 
 type HoursWorked struct {

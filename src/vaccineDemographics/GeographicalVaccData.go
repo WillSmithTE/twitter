@@ -38,7 +38,7 @@ func GetGeographicalVaccData() (*Database, error) {
 
 		num1Float, num2Float := PctToDecimal(num1Dose), PctToDecimal(num2Doses)
 		areaData.CovidVaccine = CovidVaccine{num1Float, num2Float}
-		areaData.Area = Area{State: state, Name4: name4}
+		areaData.Area = *NewArea(state, name4)
 
 		database.Data = append(database.Data, areaData)
 	}

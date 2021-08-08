@@ -1,11 +1,20 @@
 package vaccineDemographics
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
 type Database struct {
-	Data []*AreaData
+	Data     []*AreaData
+	Computed ComputedData
+}
+
+func (database *Database) MarshalJSON() ([]byte, error) {
+	return json.Marshal(Database{
+		Data:     database.Data,
+		Computed: *NewComputedData(database.Data),
+	})
 }
 
 func (database *Database) getAreaDataByCode(code int) (*AreaData, error) {

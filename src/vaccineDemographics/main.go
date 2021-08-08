@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/willsmithte/twitter/src/util"
 )
 
 // sources
@@ -22,7 +21,6 @@ func Main() {
 	// ?? add national vacc-age data
 
 	database := buildDatabase()
-	util.PrintJson(database.Data)
 
 	serve(database)
 }
@@ -54,7 +52,10 @@ func handleRequests(data *Database) {
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-			json.NewEncoder(w).Encode(data)
+			err := json.NewEncoder(w).Encode(data)
+			if err != nil {
+				log.Fatalf("error encoding data - %v", err)
+			}
 		},
 	)
 	http.Handle("/", r)
