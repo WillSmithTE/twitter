@@ -12,7 +12,8 @@ func NewArea(state string, name4 string) *Area {
 		State: state,
 		Name4: name4,
 		CensusStats: AreaCensusStats{
-			Religion: *NewReligion(),
+			Religion: Religion{Raw: make(map[string]int)},
+			Ancestry: Ancestry{Raw: make(map[string]int)},
 		},
 	}
 }
@@ -29,6 +30,11 @@ type AreaCensusStats struct {
 	Religion     Religion
 	HoursWorked  HoursWorked
 	TravelToWork TravelToWork
+	Ancestry     Ancestry
+}
+
+type Ancestry struct {
+	Raw map[string]int
 }
 
 type Religion struct {
@@ -47,12 +53,37 @@ func (A *Area) GetReligionPercentages() map[string]float64 {
 	return percentageMap
 }
 
+func (A *Area) GetAncestryPercentages() map[string]float64 {
+	percentageMap := make(map[string]float64)
+	for key, numPeople := range A.CensusStats.Ancestry.Raw {
+		percentageMap[key] = float64(numPeople) / float64(A.CensusStats.Population)
+	}
+	return percentageMap
+}
+
 type HoursWorked struct {
-	Pct1to15Hours  float32
-	Pct16to24Hours float32
-	Pct25to34Hours float32
-	Pct35to39Hours float32
-	Pct40PlusHours float32
+	Average         float64
+	Num0            int
+	Num1to15        int
+	Num16to24       int
+	Num25to34       int
+	Num35to39       int
+	Num40           int
+	Num41to48       int
+	Num49Plus       int
+	NumNotSpecified int
+}
+
+func (h *HoursWorked) SetAverage(totalNumPeople int) {
+	sumHoursWorked := 0.0
+	sumHoursWorked += float64(8 * h.Num1to15)
+	sumHoursWorked += float64(20 * h.Num16to24)
+	sumHoursWorked += 29.5 * float64(h.Num25to34)
+	sumHoursWorked += float64(37 * h.Num35to39)
+	sumHoursWorked += float64(40 * h.Num40)
+	sumHoursWorked += 44.5 * float64(h.Num41to48)
+	sumHoursWorked += float64(53 * h.Num49Plus)
+	h.Average = sumHoursWorked / float64(totalNumPeople)
 }
 
 type Incomes struct {

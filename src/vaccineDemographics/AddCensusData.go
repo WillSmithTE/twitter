@@ -11,7 +11,7 @@ var sheetsDirPath = "src/vaccineDemographics/assets/2016_GCP_ALL_for_NSW_short-h
 
 type AddData func(*Database) error
 
-var AddDataFuncs = []AddData{addPopulation, addMedians, addReligion, addMotorVehicles}
+var AddDataFuncs = []AddData{addPopulation, addMedians, addReligion, addMotorVehicles, addHoursWorked, addAncestry}
 
 func AddCensusData(database *Database) error {
 	for _, addDataFunc := range AddDataFuncs {
@@ -130,10 +130,62 @@ func addMotorVehicles(database *Database) error {
 		}
 
 		average := float64(totalNumVehicles) / float64(totalNumDwellings)
-		log.Printf("%v - %v - %v", totalNumVehicles, totalNumDwellings, average)
 
 		areaData.Area.CensusStats.AverageMotorVehiclesPerDwelling = average
 
+		return nil
+	})
+}
+
+func addHoursWorked(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G52D_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, _ []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+		totalNumPeople := util.StringToInt(row[30])
+
+		areaData.Area.CensusStats.HoursWorked.Num0 = util.StringToInt(row[21])
+		areaData.Area.CensusStats.HoursWorked.Num1to15 = util.StringToInt(row[22])
+		areaData.Area.CensusStats.HoursWorked.Num16to24 = util.StringToInt(row[23])
+		areaData.Area.CensusStats.HoursWorked.Num25to34 = util.StringToInt(row[24])
+		areaData.Area.CensusStats.HoursWorked.Num35to39 = util.StringToInt(row[25])
+		areaData.Area.CensusStats.HoursWorked.Num40 = util.StringToInt(row[26])
+		areaData.Area.CensusStats.HoursWorked.Num41to48 = util.StringToInt(row[27])
+		areaData.Area.CensusStats.HoursWorked.Num49Plus = util.StringToInt(row[28])
+		areaData.Area.CensusStats.HoursWorked.NumNotSpecified = util.StringToInt(row[29])
+
+		areaData.Area.CensusStats.HoursWorked.SetAverage(totalNumPeople)
+
+		return nil
+	})
+}
+
+func addAncestry(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G08_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, headerRow []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+
+		for i := 6; i < len(row)-6; i += 6 {
+			peopleCount := util.StringToInt(row[i])
+			areaData.Area.CensusStats.Ancestry.Raw[headerRow[i]] = peopleCount
+		}
 		return nil
 	})
 }

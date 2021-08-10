@@ -3,19 +3,63 @@ package vaccineDemographics
 import (
 	"log"
 	"math"
-
-	"github.com/willsmithte/twitter/src/util"
 )
 
 type ComputedData struct {
 	ReligionCorrelations map[string]float64
+	AncestryCorrelations map[string]float64
 }
 
 func NewComputedData(data []*AreaData) *ComputedData {
-	return &ComputedData{ReligionCorrelations: calculateReligionCorrelations(data)}
+	return &ComputedData{
+		ReligionCorrelations: calculateReligionCorrelations(data),
+		AncestryCorrelations: calculateAncestryCorrelations(data),
+	}
 }
 
+type getStatMap func(d *AreaData) map[string]float64
+
 func calculateReligionCorrelations(data []*AreaData) map[string]float64 {
+	getStatMap := func(d *AreaData) map[string]float64 {
+		return d.Area.GetReligionPercentages()
+	}
+	return calculateCorrelations(data, getStatMap)
+}
+
+func calculateAncestryCorrelations(data []*AreaData) map[string]float64 {
+	getStatMap := func(d *AreaData) map[string]float64 {
+		return d.Area.GetAncestryPercentages()
+	}
+	return calculateCorrelations(data, getStatMap)
+}
+
+func calculateCorrelations(data []*AreaData, getStatMap getStatMap) map[string]float64 {
+	correlations := make(map[string]float64)
+	for i := 0; i < len(data); i++ {
+		statMap := getStatMap(data[i])
+		for key := range statMap {
+			_, ok := correlations[key]
+			if !ok {
+				var allKeyPcts, allPctVaxeds []float64
+				for j := i; j < len(data); j++ {
+					pct, areaHasKey := getStatMap(data[j])[key]
+					if areaHasKey {
+						allKeyPcts = append(allKeyPcts, pct)
+						allPctVaxeds = append(allPctVaxeds, data[j].CovidVaccine.Num1Dose)
+					}
+				}
+				corrCoeff := correlationCoefficient(allKeyPcts, allPctVaxeds)
+				if math.IsNaN(corrCoeff) {
+					log.Printf("Correlation coefficient is NaN for %v %v\n", key, data[i].Area.Name4)
+				} else {
+					correlations[key] = corrCoeff
+				}
+			}
+		}
+	}
+	return correlations
+}
+func calculateCorrelationsOld(data []*AreaData) map[string]float64 {
 	correlations := make(map[string]float64)
 	for i := 0; i < len(data); i++ {
 		for religionName := range data[i].Area.GetReligionPercentages() {
@@ -38,7 +82,6 @@ func calculateReligionCorrelations(data []*AreaData) map[string]float64 {
 			}
 		}
 	}
-	util.PrintJson(correlations)
 	return correlations
 }
 
