@@ -93,12 +93,13 @@ type Incomes struct {
 }
 
 type TravelToWork struct {
-	CarDriver       float32
-	CarPassenger    float32
-	WorkAtHome      float32
-	Bus             float32
-	Train           float32
-	PublicTransport float32
+	PctWorkFromHome float64
+	CarDriver       float64
+	CarPassenger    float64
+	WorkAtHome      float64
+	Bus             float64
+	Train           float64
+	PublicTransport float64
 }
 
 type Age struct {

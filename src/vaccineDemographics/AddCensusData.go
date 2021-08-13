@@ -11,7 +11,7 @@ var sheetsDirPath = "src/vaccineDemographics/assets/2016_GCP_ALL_for_NSW_short-h
 
 type AddData func(*Database) error
 
-var AddDataFuncs = []AddData{addPopulation, addMedians, addReligion, addMotorVehicles, addHoursWorked, addAncestry}
+var AddDataFuncs = []AddData{addPopulation, addMedians, addReligion, addMotorVehicles, addHoursWorked, addAncestry, addTravelToWorkMethod}
 
 func AddCensusData(database *Database) error {
 	for _, addDataFunc := range AddDataFuncs {
@@ -186,6 +186,28 @@ func addAncestry(database *Database) error {
 			peopleCount := util.StringToInt(row[i])
 			areaData.Area.CensusStats.Ancestry.Raw[headerRow[i]] = peopleCount
 		}
+		return nil
+	})
+}
+
+func addTravelToWorkMethod(database *Database) error {
+	filename := sheetsDirPath + "2016Census_G59_NSW_SA4.csv"
+	return util.ExecuteOnEachCsvRow(filename, func(row []string, headerRow []string) error {
+		censusCode := row[0]
+		codeInt, err := strconv.Atoi(censusCode)
+		if err != nil {
+			return err
+		}
+		areaData, err := database.getAreaDataByCode(codeInt)
+		if err != nil {
+			log.Print(err.Error())
+			return nil
+		}
+
+		workFromHomeNumber := util.StringToInt(row[99])
+		totalPeople := util.StringToInt(row[108])
+
+		areaData.Area.CensusStats.TravelToWork.PctWorkFromHome = float64(workFromHomeNumber) / float64(totalPeople)
 		return nil
 	})
 }
