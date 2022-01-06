@@ -10,7 +10,7 @@ import (
 )
 
 func GetGeographicalVaccData() (*Database, error) {
-	filename := "src/vaccineDemographics/assets/covid-19-vaccination-geographic-vaccination-rates-2-august-2021.csv"
+	filename := "src/vaccineDemographics/assets/geographicalCensusData/9-8-2021/covid-19-vaccination-geographic-vaccination-rates-9-august-2021.csv"
 	f, err := os.Open(filename)
 	if err != nil {
 		return nil, err

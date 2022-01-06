@@ -6,14 +6,14 @@ import (
 )
 
 type Database struct {
-	Data     []*AreaData
-	Computed ComputedData
+	DataByDate     map[string][]*AreaData
+	ComputedByDate map[string]ComputedData
 }
 
 func (database *Database) MarshalJSON() ([]byte, error) {
 	return json.Marshal(Database{
-		Data:     database.Data,
-		Computed: *NewComputedData(database.Data),
+		DataByDate:     database.DataByDate,
+		ComputedByDate: *NewComputedData(database.DataByDate),
 	})
 }
 
